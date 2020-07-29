@@ -20,7 +20,7 @@ def imdb_filmo_scraper(actor_href):
     soup = BeautifulSoup(r.content, 'html.parser')
     
     # Retrieve filmography data
-    films = soup.find_all('div', id = re.compile('^actor-'))
+    films = soup.find_all('div', id = re.compile('^act-'))
     
 #     # Time milestone - Site parse time
 #     siteparsetime = pd.Timestamp.now()
