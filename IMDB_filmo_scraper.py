@@ -20,7 +20,8 @@ def imdb_filmo_scraper(actor_href):
     soup = BeautifulSoup(r.content, 'html.parser')
     
     # Retrieve filmography data
-    films = soup.find_all('div', id = re.compile('^act-'))
+    # Revised for Actor and Actress credits
+    films = soup.find_all('div', id = re.compile('^act'))
     
 #     # Time milestone - Site parse time
 #     siteparsetime = pd.Timestamp.now()
@@ -33,13 +34,15 @@ def imdb_filmo_scraper(actor_href):
     filmsarray = []
     for film in films:
         film_href = film.a.get('href')
-        filmsarray.append(imdb_film_data(film_href))
+        filmsarray.append(actor_href, imdb_film_data(film_href))
         
 #         # Time milestone - Each film iteration in array
 #         print('Film processed:')
 #         print(pd.Timestamp.now())
         
-    filmspd = pd.DataFrame(filmsarray, columns = ['Title',
+    filmspd = pd.DataFrame(filmsarray, columns = ['actor_href',
+                                                  'film_href',
+                                                  'Title',
                                                   'Year',
                                                   'IMDB_Rating',
                                                   '#_of_Ratings',

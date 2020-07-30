@@ -7,11 +7,11 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from usd_conversion import usd_conversion
 
-def imdb_film_data(href):
-    # Append href input to full IMDB URL
-    url = 'https://www.imdb.com' + href
+def imdb_film_data(film_href):
+    # Append film_href input to full IMDB URL
+    url = 'https://www.imdb.com' + film_href
     
-    # Parse URL with BeautifulSoup
+    # Parse IMDB URL with BeautifulSoup
     r = requests.get(url)
     soup = BeautifulSoup(r.content, 'html.parser')
     
@@ -81,5 +81,5 @@ def imdb_film_data(href):
         worldwideVal = usd_conversion(str_worldwideVal)
 
     # Return list of film data in prescribed order
-    filmdata = [title, year, imdbRating, imdbRatingQty, budgetVal, openingVal, domesticVal, worldwideVal]
+    filmdata = [film_href, title, year, imdbRating, imdbRatingQty, budgetVal, openingVal, domesticVal, worldwideVal]
     return filmdata
