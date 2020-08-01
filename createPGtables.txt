@@ -1,0 +1,42 @@
+CREATE TABLE public.db_actor
+(
+    href_actor character varying,
+    name character varying NOT NULL,
+    dob integer,
+    PRIMARY KEY (href_actor)
+);
+
+ALTER TABLE public.db_actor
+    OWNER to postgres;
+
+===
+
+CREATE TABLE public.db_film
+(
+    href_film character varying,
+    title character varying NOT NULL,
+    year integer,
+	imdb_rating numeric,
+	imdb_qty integer,
+	budget numeric,
+	opening_wknd numeric,
+	gross_domestic numeric,
+	ww_gross numeric,
+    PRIMARY KEY (href_film)
+);
+
+ALTER TABLE public.db_film
+    OWNER to postgres;
+
+===
+
+CREATE TABLE public.db_filmcredits
+(
+    href_filmact character varying,
+    href_film character varying REFERENCES db_film (href_film),
+    href_actor character varying REFERENCES db_actor (href_actor),
+    PRIMARY KEY (href_filmact)
+);
+
+ALTER TABLE public.db_filmcredits
+    OWNER to postgres;
