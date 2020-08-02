@@ -36,14 +36,9 @@ def imdb_filmo_scraper(href_actor):
     filmsarray = []
     for film in films:
         href_film = film.a.get('href')
-        film_row = imdb_film_data(href_film)
-        film_row.insert(0, href_actor)
-        href_filmact = href_film + href_actor
-        film_row.insert(0, href_filmact)
-        filmsarray.append(film_row)
-
-    filmspd = pd.DataFrame(filmsarray, columns = ['href_filmact',
-                                                  'href_actor'
+        filmsarray.append(href_actor, imdb_film_data(href_film))
+    
+    filmspd = pd.DataFrame(filmsarray, columns = ['href_actor',
                                                   'href_film',
                                                   'title',
                                                   'year',
