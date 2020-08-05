@@ -1,3 +1,6 @@
+# Test.py
+# Hard-coded example to pull filmography data of Tom Holland and upload to Google Cloud Platform Cloud SQL server
+
 import requests
 import re
 from bs4 import BeautifulSoup
@@ -33,7 +36,7 @@ conn.execute(
     "DROP TABLE IF EXISTS temp_table_film"
 )
 conn.execute(
-    "CREATE TABLE temp_table_film (filmact_id varchar PRIMARY KEY, actor_href varchar, film_href varchar, title varchar, year integer, imdb_rating numeric, rating_qty numeric, budget numeric, opening_wknd numeric, domestic_gross numeric, ww_gross numeric)"
+    "CREATE TABLE temp_table_film (key_filmact varchar PRIMARY KEY, href_actor varchar, href_film varchar, title varchar, year integer, imdb_rating numeric, imdb_qty numeric, budget numeric, gross_wknd numeric, gross_domestic numeric, gross_ww numeric)"
 )
 print("Created temp_table_film.")
 
@@ -43,7 +46,7 @@ conn.execute(
     "DROP TABLE IF EXISTS temp_table_actor"
 )
 conn.execute(
-    "CREATE TABLE temp_table_actor (actor_href varchar PRIMARY KEY, fullname varchar NOT NULL, dob DATE)"
+    "CREATE TABLE temp_table_actor (href_actor varchar PRIMARY KEY, fullname varchar NOT NULL, dob DATE)"
 )
 
 # Populate temp_table_film with result_films
@@ -57,10 +60,10 @@ print("Populated temp_table_actor.")
 # Merge temp_table_film into db_film
 conn.execute(
     sa.text("""\
-        INSERT INTO db_film (film_href, title, year, imdb_rating, rating_qty, budget, opening_wknd, domestic_gross, ww_gross)
-        SELECT film_href, title, year, imdb_rating, rating_qty, budget, opening_wknd, domestic_gross, ww_gross FROM temp_table_film
-        ON CONFLICT (film_href) DO
-            UPDATE SET (title, year, imdb_rating, rating_qty, budget, opening_wknd, domestic_gross, ww_gross) = (EXCLUDED.title, EXCLUDED.year, EXCLUDED.imdb_rating, EXCLUDED.rating_qty, EXCLUDED.budget, EXCLUDED.opening_wknd, EXCLUDED.domestic_gross, EXCLUDED.ww_gross)
+        INSERT INTO db_film (href_film, title, year, imdb_rating, imdb_qty, budget, gross_wknd, gross_domestic, gross_ww)
+        SELECT href_film, title, year, imdb_rating, imdb_qty, budget, gross_wknd, gross_domestic, gross_ww FROM temp_table_film
+        ON CONFLICT (href_film) DO
+            UPDATE SET (title, year, imdb_rating, imdb_qty, budget, gross_wknd, gross_domestic, gross_ww) = (EXCLUDED.title, EXCLUDED.year, EXCLUDED.imdb_rating, EXCLUDED.imdb_qty, EXCLUDED.budget, EXCLUDED.gross_wknd, EXCLUDED.gross_domestic, EXCLUDED.gross_ww)
         """
     )
 )
@@ -69,9 +72,9 @@ print("Upsert to db_film complete.")
 # Merge temp_table_actor into db_actor
 conn.execute(
     sa.text("""\
-        INSERT INTO db_actor (actor_href, fullname, dob)
-        SELECT actor_href, fullname, dob FROM temp_table_actor
-        ON CONFLICT (actor_href) DO NOTHING
+        INSERT INTO db_actor (href_actor, fullname, dob)
+        SELECT href_actor, fullname, dob FROM temp_table_actor
+        ON CONFLICT (href_actor) DO NOTHING
         """
     )
 )
@@ -80,9 +83,9 @@ print("Upsert to db_filmcredits complete.")
 # Merge temp_table_film into db_filmcredits
 conn.execute(
     sa.text("""\
-        INSERT INTO db_filmcredits (filmact_id, film_href, actor_href)
-        SELECT filmact_id, film_href, actor_href FROM temp_table_film
-        ON CONFLICT (filmact_id) DO NOTHING
+        INSERT INTO db_filmcredits (key_filmact, href_film, href_actor)
+        SELECT key_filmact, href_film, href_actor FROM temp_table_film
+        ON CONFLICT (key_filmact) DO NOTHING
         """
     )
 )

@@ -1,3 +1,6 @@
+# Postgres SQL Queries
+# SQL queries were tested in PgAdmin during development of Google Cloud SQL database work
+
 CREATE TABLE public.db_actor
 (
     href_actor character varying,

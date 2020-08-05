@@ -1,5 +1,8 @@
 # IMDB_film_data.py
 # Ref. Development - IMDB Film Details Jupyter Notebook for more details
+# Input: imdb_film_data(href_film)
+# Output: filmdata
+# Where filmdata is an array with href_film, title, year, imdb_rating, imdb_qty, budget, gross_wknd, gross_domestic, gross_ww
 
 import requests
 import re
@@ -8,8 +11,8 @@ import pandas as pd
 from usd_conversion import usd_conversion
 
 def imdb_film_data(href_film):
-    # Append href_film input to full IMDB URL
-    url = 'https://wwwimdb.com' + href_film
+    # Append film_href input to full IMDB URL
+    url = 'https://www.imdb.com' + href_film
     
     # Parse IMDB URL with BeautifulSoup
     r = requests.get(url)
@@ -42,7 +45,7 @@ def imdb_film_data(href_film):
         str_imdb_qty = imdbRatingdata.a.text
         imdb_rating = float(str_imdb_rating)
         str_imdb_qty = str_imdb_qty.replace(',','')
-        imdb_qty = int(str_imdb_qty)
+        imdb_qty = float(str_imdb_qty)
 
     # Retrieve budget data
     # Create variable budget
@@ -55,31 +58,32 @@ def imdb_film_data(href_film):
         budget = usd_conversion(str_budget)
 
     # Retrieve box office data including opening weekend, gross domestic, and worldwide gross values
-    # Create variable opening_wknd, gross_domestic, ww_gross
-    openingTag = soup.find('h4', text = re.compile('^Opening Weekend'))
-    if openingTag is None:
-        opening_wknd = None
+    # Create variables gross_wknd, gross_domestic, gross_ww
+    gross_wkndTag = soup.find('h4', text = re.compile('^Opening Weekend'))
+    if gross_wkndTag is None:
+        gross_wknd = None
         pass
     else:
-        str_opening_wknd = openingTag.next_sibling
-        opening_wknd = usd_conversion(str_opening_wknd)
+        str_gross_wknd = gross_wkndTag.next_sibling
+        gross_wknd = usd_conversion(str_gross_wknd)
     
-    domesticTag = soup.find('h4', text = re.compile('^Gross '))
-    if domesticTag is None:
+    gross_domesticTag = soup.find('h4', text = re.compile('^Gross '))
+    if gross_domesticTag is None:
         gross_domestic = None
         pass
     else:
-        str_gross_domestic = domesticTag.next_sibling
+        str_gross_domestic = gross_domesticTag.next_sibling
         gross_domestic = usd_conversion(str_gross_domestic)
     
-    worldwideTag = soup.find('h4', text = re.compile('^Cumulative Worldwide Gross'))
-    if worldwideTag is None:
-        ww_gross = None
+    gross_wwTag = soup.find('h4', text = re.compile('^Cumulative Worldwide Gross'))
+    if gross_wwTag is None:
+        gross_ww = None
         pass
     else:
-        str_ww_gross = worldwideTag.next_sibling
-        ww_gross = usd_conversion(str_ww_gross)
+        str_gross_ww = gross_wwTag.next_sibling
+        gross_ww = usd_conversion(str_gross_ww)
 
     # Return list of film data in prescribed order
-    filmdata = [href_film, title, year, imdb_rating, imdb_qty, budget, opening_wknd, gross_domestic, ww_gross]
+    filmdata = [href_film, title, year, imdb_rating, imdb_qty, budget, gross_wknd, gross_domestic, gross_ww]
     return filmdata
+    
