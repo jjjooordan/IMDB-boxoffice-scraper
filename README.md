@@ -26,9 +26,8 @@ Within the IMDB_filmo_scraper function, it will call the IMDB_film_data function
 https://www.imdb.com/title/tt9603212/
 ```
 The IMDB_film_data function will iterate the following:
+```
 imdb_film_data('/tt9603212/')
 ```
-
-
 ## Development
-For more development details, please refer to the accompanying Jupyter Notebooks in the repository.
+For development details, please refer to the accompanying Jupyter Notebooks in the repository.
